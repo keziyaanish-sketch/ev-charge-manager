@@ -1,5 +1,5 @@
 
-const API_URL = "http://127.0.0.1:3000/api";
+const API_URL = "https://ev-charge-manager-l6tj.onrender.com";
 
 let selectedVehicle = null;
 let toastTimer;
