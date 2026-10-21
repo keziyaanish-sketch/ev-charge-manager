@@ -3,12 +3,13 @@ const API_URL = "http://127.0.0.1:3000/api";
 
 let selectedVehicle = null;
 let toastTimer;
+let isSavingSession = false;
 
 const $ = id => document.getElementById(id);
 
-// ================================
+// ========================================
 // GENERAL HELPERS
-// ================================
+// ========================================
 
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -28,29 +29,27 @@ function money(value) {
     });
 }
 
-// Always display timestamps using Kerala's local time: IST (UTC+5:30).
+// Display only the date, without time.
 function formatRecordDate(value) {
     if (!value) return "—";
 
     const date = new Date(value);
 
-    if (Number.isNaN(date.getTime())) return "—";
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
 
-    return date.toLocaleString("en-IN", {
+    return date.toLocaleDateString("en-IN", {
         timeZone: "Asia/Kolkata",
         day: "2-digit",
         month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
+        year: "numeric"
     });
 }
 
-// ================================
-// MESSAGES AND API
-// ================================
+// ========================================
+// MESSAGES AND API REQUESTS
+// ========================================
 
 function showMessage(id, message, type = "") {
     const element = $(id);
@@ -106,9 +105,9 @@ async function apiRequest(path, options = {}) {
     return data;
 }
 
-// ================================
+// ========================================
 // DASHBOARD
-// ================================
+// ========================================
 
 async function loadDashboard() {
     try {
@@ -162,9 +161,9 @@ async function loadDashboard() {
     }
 }
 
-// ================================
+// ========================================
 // CHARGING POINTS
-// ================================
+// ========================================
 
 async function loadChargingPoints() {
     try {
@@ -175,6 +174,7 @@ async function loadChargingPoints() {
                 ? data
                 : data.chargingPoints || data.points || []
         );
+
     } catch (error) {
         $("points-grid").innerHTML =
             `<p class="message error">${escapeHTML(error.message)}</p>`;
@@ -225,9 +225,9 @@ function renderChargingPoints(points) {
     $("total-points").textContent = points.length;
 }
 
-// ================================
+// ========================================
 // VEHICLE LOOKUP
-// ================================
+// ========================================
 
 async function lookupVehicle(registration) {
     const reg = registration.trim().toUpperCase();
@@ -333,9 +333,9 @@ $("lookup-form").addEventListener("submit", async event => {
     await lookupVehicle($("lookup-registration").value);
 });
 
-// ================================
+// ========================================
 // REGISTER VEHICLE
-// ================================
+// ========================================
 
 $("vehicle-form").addEventListener("submit", async event => {
     event.preventDefault();
@@ -403,12 +403,15 @@ $("vehicle-form").addEventListener("submit", async event => {
     }
 });
 
-// ================================
+// ========================================
 // SAVE CHARGING SESSION
-// ================================
+// ========================================
 
 $("session-form").addEventListener("submit", async event => {
     event.preventDefault();
+
+    // Prevent accidental duplicate submissions while saving.
+    if (isSavingSession) return;
 
     const registration = $("session-registration")
         .value.trim().toUpperCase();
@@ -462,6 +465,7 @@ $("session-form").addEventListener("submit", async event => {
         'button[type="submit"]'
     );
 
+    isSavingSession = true;
     button.disabled = true;
     button.textContent = "Saving session...";
 
@@ -493,7 +497,6 @@ $("session-form").addEventListener("submit", async event => {
             );
         }
 
-        // PostgreSQL generates the session timestamp automatically.
         const payload = {
             vehicleId: vehicle.id,
             registrationNumber: registration,
@@ -513,7 +516,7 @@ $("session-form").addEventListener("submit", async event => {
 
         showMessage(
             "session-message",
-            `Charging session saved successfully! Final amount: ${money(savedAmount)}. Date and time were generated automatically.`,
+            `Charging session saved successfully! Final amount: ${money(savedAmount)}.`,
             "success"
         );
 
@@ -534,14 +537,15 @@ $("session-form").addEventListener("submit", async event => {
     } catch (error) {
         showMessage("session-message", error.message, "error");
     } finally {
+        isSavingSession = false;
         button.disabled = false;
         button.textContent = "✓ Save charging session";
     }
 });
 
-// ================================
+// ========================================
 // VEHICLE CHARGING HISTORY
-// ================================
+// ========================================
 
 $("history-btn").addEventListener("click", async () => {
     if (!selectedVehicle) {
@@ -582,9 +586,7 @@ $("history-btn").addEventListener("click", async () => {
 
             return `
                 <div class="history-item">
-                    <strong>
-                        ${escapeHTML(formatRecordDate(date))}
-                    </strong>
+                    <strong>${escapeHTML(formatRecordDate(date))}</strong>
                     <br>
                     Starting charge:
                     ${
@@ -611,9 +613,9 @@ $("history-btn").addEventListener("click", async () => {
     }
 });
 
-// ================================
+// ========================================
 // DATABASE RECORDS
-// ================================
+// ========================================
 
 function renderTableRows(elementId, rows, columns, emptyMessage) {
     const body = $(elementId);
@@ -727,6 +729,7 @@ async function loadDatabaseRecords() {
             }
         ], "No charging points found.");
 
+        // Seven columns: date only, not date and time.
         renderTableRows("records-sessions-body", data.sessions, [
             { key: "id" },
             { key: "started_at", format: formatRecordDate },
@@ -745,7 +748,7 @@ async function loadDatabaseRecords() {
         ], "No charging sessions found.");
 
         message.textContent = search || paymentStatus
-            ? "Matching records loaded. Summary totals reflect the current filters."
+            ? "Matching records loaded."
             : "Database records loaded successfully.";
 
         message.className = "message success";
@@ -766,15 +769,31 @@ async function loadDatabaseRecords() {
                 </tr>
             `;
         });
+
     } finally {
         $("records-refresh").disabled = false;
         $("records-search-btn").disabled = false;
     }
 }
 
-$("records-refresh").addEventListener("click", loadDatabaseRecords);
-$("records-search-btn").addEventListener("click", loadDatabaseRecords);
-$("records-payment-filter").addEventListener("change", loadDatabaseRecords);
+// ========================================
+// SEARCH AND FILTER RECORDS
+// ========================================
+
+$("records-refresh").addEventListener(
+    "click",
+    loadDatabaseRecords
+);
+
+$("records-search-btn").addEventListener(
+    "click",
+    loadDatabaseRecords
+);
+
+$("records-payment-filter").addEventListener(
+    "change",
+    loadDatabaseRecords
+);
 
 $("records-search").addEventListener("keydown", event => {
     if (event.key === "Enter") {
@@ -789,9 +808,9 @@ $("records-clear-btn").addEventListener("click", () => {
     loadDatabaseRecords();
 });
 
-// ================================
+// ========================================
 // NAVIGATION
-// ================================
+// ========================================
 
 document.querySelectorAll(".nav-link").forEach(link => {
     link.addEventListener("click", () => {
@@ -803,14 +822,9 @@ document.querySelectorAll(".nav-link").forEach(link => {
     });
 });
 
-// ================================
-// INITIAL SETUP — KERALA TIME
-// ================================
-
-const keralaTimeOptions = {
-    timeZone: "Asia/Kolkata",
-    hour12: true
-};
+// ========================================
+// INITIAL SETUP
+// ========================================
 
 $("today-date").textContent = new Date().toLocaleDateString("en-IN", {
     timeZone: "Asia/Kolkata",

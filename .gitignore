@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+backend/.env
+backend/node_modules/
+node_modules/
+*.log
+npm-debug.log*
+.vscode/
+.DS_Store
+Thumbs.db

@@ -11,6 +11,7 @@
 </head>
 <body>
 <div class="app">
+
     <aside class="sidebar">
         <div class="brand">
             <div class="brand-icon">⚡</div>
@@ -38,6 +39,7 @@
     </aside>
 
     <main class="main-content">
+
         <header class="topbar">
             <div>
                 <p class="eyebrow">STATION MANAGEMENT</p>
@@ -47,6 +49,7 @@
             <div class="date-chip" id="today-date">Today's overview</div>
         </header>
 
+        <!-- DASHBOARD -->
         <section id="dashboard">
             <div class="section-heading">
                 <div>
@@ -62,16 +65,19 @@
                     <div class="stat-value" id="today-sessions">—</div>
                     <p>Charging visits today</p>
                 </article>
+
                 <article class="stat-card stat-green">
                     <div class="stat-top"><span>Today's Revenue</span><span class="stat-icon">₹</span></div>
                     <div class="stat-value" id="today-revenue">—</div>
                     <p>Total recorded charging value</p>
                 </article>
+
                 <article class="stat-card stat-blue">
                     <div class="stat-top"><span>Available Points</span><span class="stat-icon">🔌</span></div>
                     <div class="stat-value" id="available-points">—</div>
                     <p>Ready for the next vehicle</p>
                 </article>
+
                 <article class="stat-card stat-orange">
                     <div class="stat-top"><span>Total Points</span><span class="stat-icon">🏁</span></div>
                     <div class="stat-value" id="total-points">—</div>
@@ -80,7 +86,9 @@
             </div>
         </section>
 
+        <!-- VEHICLE LOOKUP AND REGISTRATION -->
         <section class="content-grid">
+
             <article class="panel" id="vehicle-lookup">
                 <div class="panel-heading">
                     <div class="heading-icon purple-icon">🚘</div>
@@ -101,7 +109,11 @@
                 <div id="lookup-result" class="result-box">
                     Enter a registration number to find a saved vehicle.
                 </div>
-                <button id="history-btn" class="btn btn-light full-width hidden" type="button">View charging history</button>
+
+                <button id="history-btn" class="btn btn-light full-width hidden" type="button">
+                    View charging history
+                </button>
+
                 <div id="history-result"></div>
             </article>
 
@@ -119,105 +131,121 @@
                         <label for="customer-name">Customer name</label>
                         <input id="customer-name" required maxlength="120" placeholder="Full name">
                     </div>
+
                     <div class="field">
                         <label for="customer-phone">Phone number</label>
                         <input id="customer-phone" type="tel" required maxlength="20" placeholder="Phone number">
                     </div>
+
                     <div class="field">
                         <label for="vehicle-registration">Registration number</label>
                         <input id="vehicle-registration" required maxlength="20" placeholder="KL01AB1234">
                     </div>
+
                     <div class="field">
                         <label for="vehicle-make">Vehicle make</label>
                         <input id="vehicle-make" placeholder="e.g. Tata">
                     </div>
+
                     <div class="field">
                         <label for="vehicle-model">Vehicle model</label>
                         <input id="vehicle-model" placeholder="e.g. Nexon EV">
                     </div>
+
                     <div class="field full">
                         <button class="btn btn-success full-width" type="submit">+ Register vehicle</button>
                     </div>
                 </form>
+
                 <div id="vehicle-message" class="message" aria-live="polite"></div>
             </article>
         </section>
 
+        <!-- NEW CHARGING SESSION -->
         <section class="panel session-panel" id="new-session">
             <div class="panel-heading">
                 <div class="heading-icon orange-icon">⚡</div>
                 <div>
                     <h2>Record charging session</h2>
-                    
-<section class="panel" id="session-section">
-    <div class="panel-heading">
-        <h2>⚡ Record Charging Session</h2>
-        <p>Record a vehicle's charging details.</p>
-    </div>
+                    <p>Record a registered vehicle's charging visit and final amount.</p>
+                </div>
+            </div>
 
-    <form id="session-form">
-        <div class="field">
-            <label for="session-registration">
-                Vehicle Registration Number
-            </label>
-            <input
-                type="text"
-                id="session-registration"
-                placeholder="e.g. KL01AB1234"
-                required
-            >
-        </div>
+            <form id="session-form" class="form-grid">
+                <div class="field full">
+                    <label for="session-registration">Vehicle registration number</label>
+                    <input
+                        type="text"
+                        id="session-registration"
+                        maxlength="20"
+                        placeholder="e.g. KL01AB1234"
+                        required
+                    >
+                </div>
 
-        <p id="selected-vehicle" class="message">
-            Enter the registration number of a registered vehicle.
-        </p>
+                <p id="selected-vehicle" class="message full">
+                    Enter the registration number of a registered vehicle.
+                </p>
 
-        <div class="field">
-            <label for="starting-percentage">
-                Starting Charging Percentage (%)
-            </label>
-            <input
-                type="number"
-                id="starting-percentage"
-                min="0"
-                max="100"
-                step="1"
-                placeholder="e.g. 20"
-                required
-            >
-        </div>
+                <div class="field">
+                    <label for="starting-percentage">Starting charging percentage (%)</label>
+                    <input
+                        type="number"
+                        id="starting-percentage"
+                        min="0"
+                        max="100"
+                        step="1"
+                        placeholder="e.g. 20"
+                        required
+                    >
+                </div>
 
-        <div class="field">
-            <label for="final-amount">Final Amount (₹)</label>
-            <input
-                type="number"
-                id="final-amount"
-                min="0"
-                step="0.01"
-                placeholder="e.g. 450"
-                required
-            >
-        </div>
+                <div class="field">
+                    <label for="final-amount">Final amount (₹)</label>
+                    <input
+                        type="number"
+                        id="final-amount"
+                        min="0"
+                        step="0.01"
+                        placeholder="e.g. 450"
+                        required
+                    >
+                </div>
 
-        <p class="message">
-            📅 Date and time will be recorded automatically.
-        </p>
+                <p class="message full">
+                    📅 The charging date is recorded automatically.
+                </p>
 
-        <p id="session-message" class="message"></p>
+                <div class="field full">
+                    <p id="session-message" class="message" aria-live="polite"></p>
+                    <button class="btn btn-primary full-width" type="submit">
+                        ✓ Save charging session
+                    </button>
+                </div>
+            </form>
+        </section>
 
-        <button type="submit">
-            ✓ Save charging session
-        </button>
-    </form>
-</section>
+        <!-- CHARGING POINTS -->
+        <section class="panel" id="charging-points">
+            <div class="panel-heading">
+                <div class="heading-icon green-icon">🔌</div>
+                <div>
+                    <h2>Charging points</h2>
+                    <p>Check the current status of your station's charging points.</p>
+                </div>
+            </div>
 
+            <div id="points-grid" class="points-grid">
+                <p class="message">Loading charging points...</p>
+            </div>
+        </section>
 
         <!-- DATABASE RECORDS -->
         <section class="panel records-panel" id="database-records">
             <div class="panel-heading">
                 <div class="heading-icon purple-icon">🗄️</div>
                 <div>
-                    <h2>Database Records</h2>
+                    <h2>Database records</h2>
                     <p>View records saved in PostgreSQL.</p>
                 </div>
                 <button class="btn btn-light" id="records-refresh" type="button">↻ Refresh</button>
@@ -230,16 +258,19 @@
                     <div class="stat-top"><span>Customers</span><span>👥</span></div>
                     <div class="stat-value" id="records-customers">—</div>
                 </article>
+
                 <article class="stat-card stat-blue">
                     <div class="stat-top"><span>Vehicles</span><span>🚘</span></div>
                     <div class="stat-value" id="records-vehicles">—</div>
                 </article>
+
                 <article class="stat-card stat-green">
-                    <div class="stat-top"><span>Charging Sessions</span><span>⚡</span></div>
+                    <div class="stat-top"><span>Charging sessions</span><span>⚡</span></div>
                     <div class="stat-value" id="records-sessions">—</div>
                 </article>
+
                 <article class="stat-card stat-orange">
-                    <div class="stat-top"><span>Charging Points</span><span>🔌</span></div>
+                    <div class="stat-top"><span>Charging points</span><span>🔌</span></div>
                     <div class="stat-value" id="records-points">—</div>
                 </article>
             </div>
@@ -249,10 +280,12 @@
                     <span>Energy consumed</span>
                     <strong id="records-units">0 kWh</strong>
                 </div>
+
                 <div class="record-metric">
                     <span>Total session value</span>
                     <strong id="records-revenue">₹0.00</strong>
                 </div>
+
                 <div class="record-metric">
                     <span>Pending payments</span>
                     <strong id="records-pending">₹0.00</strong>
@@ -264,6 +297,7 @@
                     <label for="records-search">Search records</label>
                     <input id="records-search" type="search" placeholder="Name, phone, registration or point">
                 </div>
+
                 <div class="field">
                     <label for="records-payment-filter">Payment status</label>
                     <select id="records-payment-filter">
@@ -272,50 +306,97 @@
                         <option value="pending">Pending</option>
                     </select>
                 </div>
+
                 <button class="btn btn-primary" id="records-search-btn" type="button">Search</button>
                 <button class="btn btn-light" id="records-clear-btn" type="button">Clear</button>
             </div>
 
+            <!-- CUSTOMERS TABLE -->
             <h3 class="records-title">Customers</h3>
             <div class="table-wrap">
                 <table class="records-table">
-                    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Created</th></tr></thead>
-                    <tbody id="records-customers-body"><tr><td colspan="4">Loading...</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Date Registered</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-customers-body">
+                        <tr><td colspan="4">Loading...</td></tr>
+                    </tbody>
                 </table>
             </div>
 
+            <!-- VEHICLES TABLE -->
             <h3 class="records-title">Vehicles</h3>
             <div class="table-wrap">
                 <table class="records-table">
-                    <thead><tr><th>ID</th><th>Registration</th><th>Make / Model</th><th>Customer</th><th>Phone</th></tr></thead>
-                    <tbody id="records-vehicles-body"><tr><td colspan="5">Loading...</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Registration</th>
+                            <th>Make / Model</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-vehicles-body">
+                        <tr><td colspan="5">Loading...</td></tr>
+                    </tbody>
                 </table>
             </div>
 
-            <h3 class="records-title">Charging Points</h3>
-            <div class="table-wrap">
-                <table class="records-table">
-                    <thead><tr><th>ID</th><th>Point</th><th>Status</th></tr></thead>
-                    <tbody id="records-points-body"><tr><td colspan="3">Loading...</td></tr></tbody>
-                </table>
-            </div>
-
-            <h3 class="records-title">Charging Sessions &amp; Bills</h3>
+            <!-- CHARGING POINTS TABLE -->
+            <h3 class="records-title">Charging points</h3>
             <div class="table-wrap">
                 <table class="records-table">
                     <thead>
-                        <tr><th>ID</th><th>Date</th><th>Customer</th><th>Registration</th><th>Point</th><th>Units (kWh)</th><th>Rate</th><th>Amount</th><th>Payment</th></tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Point</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
-                    <tbody id="records-sessions-body"><tr><td colspan="9">Loading...</td></tr></tbody>
+                    <tbody id="records-points-body">
+                        <tr><td colspan="3">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CHARGING SESSIONS TABLE: DATE ONLY -->
+            <h3 class="records-title">Charging sessions</h3>
+            <div class="table-wrap">
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Registration</th>
+                            <th>Starting Charge (%)</th>
+                            <th>Amount (₹)</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-sessions-body">
+                        <tr><td colspan="7">Loading...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
 
-        <footer>VoltCare · EV Charge Manager <span>Powered by Node.js + PostgreSQL</span></footer>
+        <footer>
+            VoltCare · EV Charge Manager
+            <span>Powered by Node.js + PostgreSQL</span>
+        </footer>
+
     </main>
 </div>
 
 <div id="toast" class="toast" role="status"></div>
+
 <script src="app.js"></script>
 </body>
 </html>
