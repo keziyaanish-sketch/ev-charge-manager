@@ -219,6 +219,21 @@ app.get("/api/dashboard", async (req, res) => {
     }
 });
 
+app.get("/api/check-tables", async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema = 'public'
+            ORDER BY table_name
+        `);
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Table check failed:", error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
 // Unknown routes
 app.use((req, res) => {
     res.status(404).json({
